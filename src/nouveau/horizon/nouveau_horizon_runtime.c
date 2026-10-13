@@ -362,6 +362,18 @@ nouveau_horizon_runtime_shutdown(void (*step)(const char *what))
                             &nouveau_horizon_runtime.devices, runtime_link) {
       nvAddressSpaceClose(&device->addr_space);
    }
+   /* A device still here was never destroyed (something still references it),
+    * so its BO cache was never drained either. Those buffers have left the
+    * identity table below, but their maps are still open and their pages
+    * still uncached: the homebrew loader cannot reuse the heap while any page
+    * keeps that attribute (0xD401). nvMapClose gives the attribute back. The
+    * entries themselves are not freed, for the reason above. */
+   if (step != NULL)
+      step("cached buffers");
+   list_for_each_entry_safe(struct nouveau_horizon_device, device,
+                            &nouveau_horizon_runtime.devices, runtime_link) {
+      nouveau_horizon_device_bo_cache_close_maps(device);
+   }
    list_inithead(&nouveau_horizon_runtime.devices);
    if (step != NULL)
       step("buffers");

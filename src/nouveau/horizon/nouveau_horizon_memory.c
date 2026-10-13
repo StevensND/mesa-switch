@@ -438,6 +438,15 @@ nouveau_horizon_device_bo_cache_trim(struct nouveau_horizon_device *device)
 }
 
 void
+nouveau_horizon_device_bo_cache_close_maps(
+   struct nouveau_horizon_device *device)
+{
+   list_for_each_entry(struct nouveau_horizon_bo_cache_entry, entry,
+                       &device->bo_cache_lru, lru_link)
+      nvMapClose(&entry->map);
+}
+
+void
 nouveau_horizon_device_bo_cache_finish(struct nouveau_horizon_device *device)
 {
    nouveau_horizon_device_bo_cache_trim(device);

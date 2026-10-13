@@ -307,6 +307,12 @@ void
 nouveau_horizon_device_bo_cache_finish(
    struct nouveau_horizon_device *device);
 
+/* For nouveau_horizon_runtime_shutdown only: closes the cached buffers' maps
+ * without the lock and without freeing anything. */
+void
+nouveau_horizon_device_bo_cache_close_maps(
+   struct nouveau_horizon_device *device);
+
 void
 nouveau_horizon_device_account_alloc(
    struct nouveau_horizon_device *device, uint64_t size_B);

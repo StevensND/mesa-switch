@@ -422,7 +422,12 @@ nouveau_horizon_runtime_put(struct nouveau_horizon_runtime *runtime);
 /* Closes the driver sessions whatever still references them, so nvservices
  * gives back every buffer and mapping this process holds. For a process that is
  * closing: nothing may touch the GPU afterwards. step, which may be NULL, is
- * told which session is about to be closed. */
+ * told which session is about to be closed.
+ *
+ * The base nvdrv session is left open (see the function), and with it the
+ * transfer memory libnx lent it from the heap. A program the homebrew loader
+ * runs must give that back too, or the loader cannot reuse the heap: once no
+ * thread can be inside the driver, it calls nvExit() itself. */
 void
 nouveau_horizon_runtime_shutdown(void (*step)(const char *what));
 
